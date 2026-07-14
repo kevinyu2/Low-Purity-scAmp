@@ -87,16 +87,16 @@ class mix_match_class():
         else :
             print(f"Warning: list size {len(lst)} is smaller than requested number {number}")
             temp_list = []
-            while number > len(lst) :
+            while number > len(lst):
                 temp_list.append(lst)
                 number -= len(lst)
             temp_list.append(np.random.choice(lst, size=number, replace=False))
-            return [item for sublist in temp_list for item in sublist]
-    
+            return np.concatenate(temp_list)
+            
     # Actually calculate the mixes
     # Returns: results, a dict with {"[METHOD]" : [0,1,1,0]} detailing ecDNA detection (1 for ecDNA)
     # Specify method arguments in methods
-    def calculate_mixes(self, methods = [('NN', 'NN', {}), ('GMM ', 'GMM', {}), ('KNN + NN', 'KNN', {})], show_hists = False) :
+    def calculate_mixes(self, methods = [('scAmp', 'NN', {}), ('GMM + NN', 'GMM', {}), ('KNN + NN', 'KNN', {})], show_hists = False) :
 
         result = {}
         for method in methods :

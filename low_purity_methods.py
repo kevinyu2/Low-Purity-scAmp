@@ -3,6 +3,7 @@ from kneed import KneeLocator
 import numpy as np
 from NN_model import SCAMP
 import torch
+import math
 
 '''
 PARAMETERS
@@ -24,7 +25,7 @@ def GMM_ecDNA_predict(model, input,
                       max_components = 15,
                       genes = np.array(['GENE']), 
                       decision_rule = 0.5,
-                      kneedle_coeff = 1.3
+                      kneedle_coeff = 3
                       ) :
     
     input = np.array(input).reshape(-1, 1)
@@ -67,11 +68,14 @@ def GMM_ecDNA_predict(model, input,
     for i in range(gmm.n_components):
         mean = gmm.means_[i, 0]
         var = gmm.covariances_[i, 0, 0]
-        # print(f"Mean: {mean}, Var: {var}")
+        weight = gmm.weights_[i]
 
-        samples = np.random.normal(mean, np.sqrt(var), size=1000).tolist()
-        if NN_ecDNA_predict(model, samples, genes, decision_rule) :
-            return True
+        # print(f"Mean: {mean}, Var: {var}, Weight: {weight}")
+
+        if weight > 0.005 :
+            samples = np.random.normal(mean, np.sqrt(var), size=1000).tolist()
+            if NN_ecDNA_predict(model, samples, genes, decision_rule) :
+                return True
 
     return False
 
@@ -119,15 +123,21 @@ PARAMETERS
 model : SCAMP model loaded from .pt file
 input : copy number list
 genes : gene name
-k : number of neighbors to consider
+k_mult : multiplier for k. k = k_mult * sqrt(num cells)
 ecDNA_percentage_thresh : threshold for ecDNA positive cells classifying ecDNA status
 decision_rule : scAmp NN threshold for classifying ecDNA status
 
 RETURNS
 Boolean, the predicted ecDNA status
 ''' 
-def KNN_ecDNA_predict(model, input, genes = np.array(['GENE']), k = 100, ecDNA_percentage_thresh = 0.001,decision_rule = 0.5) :
+def KNN_ecDNA_predict(model, input, genes = np.array(['GENE']), k_mult = 1, ecDNA_percentage_thresh = 0.001,decision_rule = 0.5) :
     arr = sorted(input)
+    k = int(k_mult * math.sqrt(len(input)))
+    # K should never be less than 10
+    k = max(k, 10)
+    # K is never greater than the input
+    k = min(k, len(input))
+    print(k)
     
     n = len(arr)
     out = []
