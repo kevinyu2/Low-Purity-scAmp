@@ -103,17 +103,32 @@ def create_HSR_noamp(NO_ITER, max_HSR = 4000, total_cells = 4000) :
             mix['HSR'] = [(HSR_num, 0)]
     
         if Noamp_num > 0 :
-            mix['Noamp'] = [(Noamp_num, 10)]
+            mix['Noamp'] = [(Noamp_num, 0)]
         for it in range(NO_ITER) :
             mixes.append(mix)
         HSR_num_float += total_cells/100 
 
     return mixes
 
-#################################################################
 
+# Two HSR of increasing shift
+def create_two_HSR(NO_ITER, HSR_1 = 2000, HSR_2 = 2000) :
+    mixes = []
+
+    for shift in range(0, 40) :
+        mix = {'HSR' : [(HSR_1, 0), (HSR_2, shift)]}
+
+        for it in range(NO_ITER) :
+            mixes.append(mix)
+
+    return mixes
+
+#################################################################
 NO_ITER = 20
 methods = [('GMM', 'GMM', {}), ('scAmp', 'NN', {}), ('KNN', 'KNN', {})]
+
+ecDNA_file = "./vectors/COLO_MYC_ecDNA.tsv"
+save_start = ""
 
 # {'Method' : (CREATE MIX FUNCTION, {ARGS}), 
 # 'Name' : PLOT NAME, 
@@ -121,56 +136,90 @@ methods = [('GMM', 'GMM', {}), ('scAmp', 'NN', {}), ('KNN', 'KNN', {})]
 # 'ecDNA' : ecDNA LOCATION, 
 # 'HSR' : HSR LOCATION, 
 # 'Noamp' : NOAMP LOCATION}
-settings_list = [{'Method' : (create_mix_HSR, {"total_cells" : 1000, "max_ecDNA" : 400}),
+settings_list = [{'Method' : (create_mix_HSR, {"total_cells" : 1000, "max_ecDNA" : 300}),
                   'Name' : "ecDNA vs HSR (1000 Cells)",
-                  'Save' : "./plots/ecDNA_HSR_1000.png",
-                  'ecDNA' : "./vectors/COLO_MYC_ecDNA.tsv",
+                  'Save' : f"./plots/{save_start}ecDNA_HSR_1000.png",
+                  'ecDNA' : ecDNA_file,
                   'HSR' : "./vectors/COLO_MYC_HSR.tsv",
                   'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
                   ,
                   {'Method' : (create_mix_HSR, {"total_cells" : 500, "max_ecDNA" : 200}),
                   'Name' : "ecDNA vs HSR (500 Cells)",
-                  'Save' : "./plots/ecDNA_HSR_500.png",
-                  'ecDNA' : "./vectors/COLO_MYC_ecDNA.tsv",
+                  'Save' : f"./plots/{save_start}ecDNA_HSR_500.png",
+                  'ecDNA' : ecDNA_file,
+                  'HSR' : "./vectors/COLO_MYC_HSR.tsv",
+                  'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
+                  ,
+                  {'Method' : (create_mix_HSR, {"total_cells" : 800, "max_ecDNA" : 300}),
+                  'Name' : "ecDNA vs HSR (800 Cells)",
+                  'Save' : f"./plots/{save_start}ecDNA_HSR_800.png",
+                  'ecDNA' : ecDNA_file,
+                  'HSR' : "./vectors/COLO_MYC_HSR.tsv",
+                  'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
+                  ,
+                  {'Method' : (create_mix_HSR, {"total_cells" : 300, "max_ecDNA" : 120}),
+                  'Name' : "ecDNA vs HSR (300 Cells)",
+                  'Save' : f"./plots/{save_start}ecDNA_HSR_300.png",
+                  'ecDNA' : ecDNA_file,
+                  'HSR' : "./vectors/COLO_MYC_HSR.tsv",
+                  'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
+                  ,
+                  {'Method' : (create_mix_HSR, {"total_cells" : 8000, "max_ecDNA" : 2500}),
+                  'Name' : "ecDNA vs HSR (8000 Cells)",
+                  'Save' : f"./plots/{save_start}ecDNA_HSR_8000.png",
+                  'ecDNA' : ecDNA_file,
+                  'HSR' : "./vectors/COLO_MYC_HSR.tsv",
+                  'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
+                  ,
+                  {'Method' : (create_HSR_noamp, {"total_cells" : 500, "max_HSR" : 200}),
+                  'Name' : "HSR vs Noamp (500 Cells)",
+                  'Save' : f"./plots/{save_start}HSR_Noamp_500.png",
+                  'ecDNA' : ecDNA_file,
                   'HSR' : "./vectors/COLO_MYC_HSR.tsv",
                   'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
                   ,
                   {'Method' : (create_HSR_noamp, {}),
                   'Name' : "HSR vs Noamp (4000 Cells)",
-                  'Save' : "./plots/HSR_Noamp_4000.png",
-                  'ecDNA' : "./vectors/COLO_MYC_ecDNA.tsv",
+                  'Save' : f"./plots/{save_start}HSR_Noamp_4000.png",
+                  'ecDNA' : ecDNA_file,
                   'HSR' : "./vectors/COLO_MYC_HSR.tsv",
                   'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
                   ,
-                #   {'Method' : (create_mix_noamp, {}),
-                #   'Name' : "ecDNA vs Noamp (4000 Cells)",
-                #   'Save' : "./plots/ecDNA_noAmp_4000.png",
-                #   'ecDNA' : "./vectors/COLO_MYC_ecDNA.tsv",
-                #   'HSR' : "./vectors/COLO_MYC_HSR.tsv",
-                #   'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
-                #   ,
-                #   {'Method' : (create_mix_HSR, {}),
-                #   'Name' : "ecDNA vs HSR (4000 Cells)",
-                #   'Save' : "./plots/ecDNA_HSR_4000.png",
-                #   'ecDNA' : "./vectors/COLO_MYC_ecDNA.tsv",
-                #   'HSR' : "./vectors/COLO_MYC_HSR.tsv",
-                #   'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
-                #   ,
-                #   {'Method' : (create_mix_HSR_noamp, {}),
-                #   'Name' : "ecDNA vs Half HSR, Half Noamp (4000 Cells)",
-                #   'Save' : "./plots/ecDNA_half_4000.png",
-                #   'ecDNA' : "./vectors/COLO_MYC_ecDNA.tsv",
-                #   'HSR' : "./vectors/COLO_MYC_HSR.tsv",
-                #   'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
-                #   ,
-                #   {'Method' : (create_mix_HSR, {}),
-                #   'Name' : "ecDNA vs HSR + 10 (4000 Cells)",
-                #   'Save' : "./plots/ecDNA_HSRp10_4000.png",
-                #   'ecDNA' : "./vectors/COLO_MYC_ecDNA.tsv",
-                #   'HSR' : "./vectors/COLO_MYC_HSR.tsv",
-                #   'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
+                  {'Method' : (create_two_HSR, {}),
+                  'Name' : "Two HSR Shifting (4000 Cells)",
+                  'Save' : f"./plots/{save_start}two_HSR_4000.png",
+                  'ecDNA' : ecDNA_file,
+                  'HSR' : "./vectors/COLO_MYC_HSR.tsv",
+                  'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
+                  ,
+                  {'Method' : (create_mix_noamp, {}),
+                  'Name' : "ecDNA vs Noamp (4000 Cells)",
+                  'Save' : f"./plots/{save_start}ecDNA_noAmp_4000.png",
+                  'ecDNA' : ecDNA_file,
+                  'HSR' : "./vectors/COLO_MYC_HSR.tsv",
+                  'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
+                  ,
+                  {'Method' : (create_mix_HSR, {}),
+                  'Name' : "ecDNA vs HSR (4000 Cells)",
+                  'Save' : f"./plots/{save_start}ecDNA_HSR_4000.png",
+                  'ecDNA' : ecDNA_file,
+                  'HSR' : "./vectors/COLO_MYC_HSR.tsv",
+                  'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
+                  ,
+                  {'Method' : (create_mix_HSR_noamp, {}),
+                  'Name' : "ecDNA vs Half HSR, Half Noamp (4000 Cells)",
+                  'Save' : f"./plots/{save_start}ecDNA_half_4000.png",
+                  'ecDNA' : ecDNA_file,
+                  'HSR' : "./vectors/COLO_MYC_HSR.tsv",
+                  'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
+                  ,
+                  {'Method' : (create_mix_HSR, {}),
+                  'Name' : "ecDNA vs HSR + 10 (4000 Cells)",
+                  'Save' : f"./plots/{save_start}ecDNA_HSRp10_4000.png",
+                  'ecDNA' : ecDNA_file,
+                  'HSR' : "./vectors/COLO_MYC_HSR.tsv",
+                  'Noamp' : "./vectors/COLO_GAPDH_Noamp.tsv"}
                   ]
-
 
 
 for settings in settings_list :
@@ -190,10 +239,12 @@ for settings in settings_list :
 
     plt.title(settings['Name'])
     plt.legend()
-    if settings['Method'][0].__name__ != "create_HSR_noamp" :
-        plt.xlabel("ecDNA Percentage")
-    else :
+    if settings['Method'][0].__name__ == "create_HSR_noamp" :
         plt.xlabel("HSR Percentage")
+    elif settings['Method'][0].__name__ == "create_two_HSR" :
+        plt.xlabel("Difference in Mean")
+    else :
+        plt.xlabel("ecDNA Percentage")
 
     plt.ylabel("Percent Predicted ecDNA")
     plt.tight_layout()
